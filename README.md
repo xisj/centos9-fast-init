@@ -30,4 +30,35 @@ wget "https://raw.githubusercontent.com/xisj/centos9-fast-init/master/vps/fast.s
 screen sh fast.sh 
 
 ```
+
+### 缓解sshd长时间连接后自动断开的问题
+```
+ClientAliveInterval 60
+ClientAliveCountMax 60
+```
+```
+vim /etc/ssh/sshd_config
+systemctl restart sshd
+```
+
+### 更新时区
+```
+timedatectl set-timezone "Asia/Shanghai"
+
+```
+
+### docker内部更新时区
+```
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime 
+```
+
+
+### 手动给ssh开放更多端口
+```
+dnf install -y policycoreutils-python-utils
+semanage port -m -t ssh_port_t -p tcp 110
+```
+
+
+
  
