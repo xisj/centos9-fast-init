@@ -59,6 +59,20 @@ dnf install -y policycoreutils-python-utils
 semanage port -m -t ssh_port_t -p tcp 110
 ```
 
+### 启用bbr
+>> vi /etc/sysctl.conf
+```
+net.core.default_qdisc=fq
+net.ipv4.tcp_congestion_control=bbr
+```
+
+```
+sysctl -p
+reboot
+sysctl net.ipv4.tcp_congestion_control
+```
+
+
 
 
  
