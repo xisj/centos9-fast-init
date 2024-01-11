@@ -59,6 +59,22 @@ dnf install -y policycoreutils-python-utils
 semanage port -m -t ssh_port_t -p tcp 110
 ```
 
+
+### 打开防火墙端口
+```
+firewall-cmd --zone=public --add-port=80/tcp --permanent  
+firewall-cmd --zone=public --add-port=80/udp --permanent  
+
+firewall-cmd --zone=public --add-port=9999/tcp --permanent  
+firewall-cmd --zone=public --add-port=9999/udp --permanent  
+
+firewall-cmd --zone=public --add-port=500/udp --permanent  
+firewall-cmd --zone=public --add-port=4500/udp --permanent  
+
+firewall-cmd --reload
+firewall-cmd --zone=public --list-ports
+```
+
 ### 启用bbr
 >> vi /etc/sysctl.conf
 ```
