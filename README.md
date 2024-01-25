@@ -76,7 +76,7 @@ firewall-cmd --zone=public --list-ports
 ```
 
 ### 启用bbr
->> vi /etc/sysctl.conf
+> vi /etc/sysctl.conf
 ```
 net.core.default_qdisc=fq
 net.ipv4.tcp_congestion_control=bbr
@@ -86,6 +86,27 @@ net.ipv4.tcp_congestion_control=bbr
 sysctl -p
 reboot
 sysctl net.ipv4.tcp_congestion_control
+```
+
+### 安装fail2ban
+```
+yum install epel-release
+yum install fail2ban
+cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+```
+> vim  /etc/fail2ban/jail.local  ,修改如下内容：
+```
+[sshd]
+enabled = true
+port = ssh
+filter = sshd
+maxretry = 5
+```
+> 启动并检查状态
+```
+systemctl start fail2ban
+systemctl enable fail2ban
+fail2ban-client status
 ```
 
 
