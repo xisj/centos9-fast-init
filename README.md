@@ -108,6 +108,7 @@ systemctl start fail2ban
 systemctl enable fail2ban
 fail2ban-client status
 ```
+> fail2ban-client status执行后可以看到被ban了多少ip之类的信息
 
 
 
