@@ -63,7 +63,10 @@ semanage port -m -t ssh_port_t -p tcp 110
 ### 打开防火墙端口
 ```
 firewall-cmd --zone=public --add-port=80/tcp --permanent  
-firewall-cmd --zone=public --add-port=80/udp --permanent  
+firewall-cmd --zone=public --add-port=80/udp --permanent
+
+firewall-cmd --zone=public --add-port=443/tcp --permanent  
+firewall-cmd --zone=public --add-port=443/udp --permanent  
 
 firewall-cmd --zone=public --add-port=9999/tcp --permanent  
 firewall-cmd --zone=public --add-port=9999/udp --permanent  
@@ -109,6 +112,80 @@ systemctl enable fail2ban
 fail2ban-client status
 ```
 > fail2ban-client status执行后可以看到被ban了多少ip之类的信息
+
+
+### 申请https 证书
+```
+yum install certbot
+```
+> 第一次申请证书
+```
+certbot certonly --config-dir /data1/privkey/config --work-dir /data1/privkey/work --logs-dir /data1/privkey/logs
+```
+> 每2个月自动更新证书
+> 
+> crontab -e
+```
+0 0 1 */2 * certbot renew --quiet
+```
+
+> 对已有nginx配置进行修改
+> 
+>  cat www.zhuikan.com.conf 
+```
+
+server {
+    listen 80;
+    server_name www.zhuikan.com zhuikan.com;
+    return 301 https://$host$request_uri;
+}
+
+
+server
+    {
+
+         listen 443 ssl;
+    server_name www.zhuikan.com zhuikan.com;
+
+    ssl_certificate /privkey/config/live/zhuikan.com/fullchain.pem;
+    ssl_certificate_key /privkey/config/live/zhuikan.com/privkey.pem;
+
+
+        index index.html index.htm index.php default.html default.htm default.php;
+        root  /htdocs/www.zhuikan.com;
+
+        include rewrite/none.conf;
+        #error_page   404   /404.html;
+
+        # Deny access to PHP files in specific directory
+        #location ~ /(wp-content|uploads|wp-includes|images)/.*\.php$ { deny all; }
+
+        include enable-php.conf;
+
+
+        location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$
+        {
+            expires      30d;
+        }
+
+        location ~ .*\.(js|css)?$
+        {
+            expires      12h;
+        }
+
+        location ~ /.well-known {
+            allow all;
+        }
+
+        location ~ /\.
+        {
+            deny all;
+        }
+
+        access_log  /logs/www.zhuikan.com.log;
+    }
+```
+
 
 
 
